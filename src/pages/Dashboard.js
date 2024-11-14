@@ -68,6 +68,28 @@ function Dashboard() {
                                         </span>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th scope="row">2</th>
+                                    <td>Bank Umum</td>
+                                    <td><span className="badge rounded-pill bg-warning">Sedang Diisi</span></td>
+                                    <td>{`${new Date().getHours()}:${new Date().getMinutes()} ${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}</td>
+                                    <td>
+                                        <span className="material-symbols-outlined">
+                                            more_vert
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Bank Umum</td>
+                                    <td><span className="badge rounded-pill bg-success">Sudah Diisi</span></td>
+                                    <td>{`${new Date().getHours()}:${new Date().getMinutes()} ${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}</td>
+                                    <td>
+                                        <span className="material-symbols-outlined">
+                                            more_vert
+                                        </span>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     }
