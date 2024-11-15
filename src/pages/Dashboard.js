@@ -38,8 +38,8 @@ function Dashboard() {
                                         <td>Bank Umum</td>
                                         <td>
                                             <div className='d-flex justify-content-end'>
-                                                <button className='btn bg-merah-gelap px-3 text-white me-2'>Instansi</button>
-                                                <button className='btn btn-primary px-3'>Pasal</button>
+                                                <Link to="/instansi/1" className='btn bg-merah-gelap px-3 text-white me-2'>Instansi</Link>
+                                                <Link to="/baris/1" className='btn btn-primary px-3'>Pasal</Link>
                                             </div>
                                         </td>
                                     </tr>

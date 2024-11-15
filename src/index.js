@@ -6,6 +6,8 @@ import Login from './Login';
 import Dashboard from './pages/Dashboard';
 import TambahRPOJK from './pages/TambahRPOJK';
 import reportWebVitals from './reportWebVitals';
+import AdminByInstansi from './pages/AdminByInstansi'
+import AdminByBaris from './pages/AdminByBaris'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
       {
         path: "tambah-rpojk",
         element: <TambahRPOJK />,
+      },
+      {
+        path: "instansi/:id",
+        element: <AdminByInstansi />,
+      },
+      {
+        path: "baris/:id",
+        element: <AdminByBaris />,
       },
     ],
   },

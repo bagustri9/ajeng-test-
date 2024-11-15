@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import './Dashboard.css';
 import { Button, Modal } from 'react-bootstrap';
+import CustomDB from '../components/CustomDB';
 
 function Dashboard() {
+    const db = CustomDB();
     const TINYMCE_API_KEY = "32m4npow6fy9y56ayqpvfnqts7gjzq86xafspc9oajenkfeg";
     const [isAdmin, setIsAdmin] = useState(false);
     const [baris, setBaris] = useState([]);
+    const [judul, setJudul] = useState("");
     const [editData, setEditData] = useState(null);
 
     useEffect(() => {
@@ -14,6 +17,10 @@ function Dashboard() {
             setIsAdmin(true);
         }
     }, [])
+
+    function handleSave() {
+        db.create("rpojk", { judul: judul })
+    }
 
     return (
         <div className='col-12' style={{ paddingTop: 40, fontWeight: 600 }}>
@@ -110,14 +117,13 @@ function Dashboard() {
                 </span>
             </div>
             <div className='col-8 offset-2'>
-                <div className='d-flex'>
-                    <label className='my-auto me-2'>Judul</label>
-                    <input className="my-auto flex-grow-1" name="judul" required={true} />
-                </div>
-                <div className='card mt-4'>
+                <div className='card'>
                     <div className='card-body'>
-                        <div className='table-responsive'>
-
+                        <div className='d-flex'>
+                            <label className='my-auto me-2'>Judul</label>
+                            <input onChange={(e) => setJudul(e.target.value)} value={judul} className="my-auto flex-grow-1" name="judul" required={true} />
+                        </div>
+                        <div className='table-responsive mt-4'>
                             <table className='table mt-2'>
                                 <thead>
                                     <tr className='bg-merah-gelap text-white'>
@@ -131,7 +137,7 @@ function Dashboard() {
                                 <tbody>
                                     {baris.map((row, index) => (
                                         <tr key={`baris-${index}`}>
-                                            <td>{(index+ 1)}</td>
+                                            <td>{(index + 1)}</td>
                                             <td>
                                                 <div dangerouslySetInnerHTML={{ __html: row.tubuh }}>
                                                 </div>
