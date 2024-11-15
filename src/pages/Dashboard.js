@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import { Link } from 'react-router-dom';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function Dashboard() {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -86,7 +87,11 @@ function Dashboard() {
                                     <th scope="row">3</th>
                                     <td>Bank Umum</td>
                                     <td><span className="badge rounded-pill bg-success">Sudah Diisi</span></td>
-                                    <td><span className="badge rounded-pill bg-danger">Ditolak</span></td>
+                                    <td>
+                                        <OverlayTrigger placement='right' overlay={<Tooltip id="tooltip-disabled">Belum ada tanda tangan direksi!</Tooltip>}>
+                                            <span className="badge rounded-pill bg-danger">Ditolak</span>
+                                        </OverlayTrigger>
+                                    </td>
                                     <td>{`${new Date().getHours()}:${new Date().getMinutes()} ${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}</td>
                                     <td>
                                         <span className="material-symbols-outlined">
