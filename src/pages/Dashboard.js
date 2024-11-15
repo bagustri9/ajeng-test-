@@ -52,6 +52,7 @@ function Dashboard() {
                                     <th scope="col">No.</th>
                                     <th scope="col">Judul</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Status Respon</th>
                                     <th scope="col">Batas Waktu</th>
                                     <th scope="col"></th>
                                 </tr>
@@ -61,6 +62,7 @@ function Dashboard() {
                                     <th scope="row">1</th>
                                     <td>Bank Umum</td>
                                     <td><span className="badge rounded-pill bg-danger">Belum Diisi</span></td>
+                                    <td>-</td>
                                     <td>{`${new Date().getHours()}:${new Date().getMinutes()} ${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}</td>
                                     <td>
                                         <span className="material-symbols-outlined">
@@ -72,6 +74,7 @@ function Dashboard() {
                                     <th scope="row">2</th>
                                     <td>Bank Umum</td>
                                     <td><span className="badge rounded-pill bg-warning">Sedang Diisi</span></td>
+                                    <td>-</td>
                                     <td>{`${new Date().getHours()}:${new Date().getMinutes()} ${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}</td>
                                     <td>
                                         <span className="material-symbols-outlined">
@@ -83,6 +86,19 @@ function Dashboard() {
                                     <th scope="row">3</th>
                                     <td>Bank Umum</td>
                                     <td><span className="badge rounded-pill bg-success">Sudah Diisi</span></td>
+                                    <td><span className="badge rounded-pill bg-danger">Ditolak</span></td>
+                                    <td>{`${new Date().getHours()}:${new Date().getMinutes()} ${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}</td>
+                                    <td>
+                                        <span className="material-symbols-outlined">
+                                            more_vert
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">3</th>
+                                    <td>Bank Umum</td>
+                                    <td><span className="badge rounded-pill bg-success">Sudah Diisi</span></td>
+                                    <td><span className="badge rounded-pill bg-success">Diterima</span></td>
                                     <td>{`${new Date().getHours()}:${new Date().getMinutes()} ${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`}</td>
                                     <td>
                                         <span className="material-symbols-outlined">
