@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import CustomDB from './components/CustomDB';
 import { motion } from "framer-motion";
+import logo from './assets/logo.png'
 
 function App() {
   const [loginId, setloginId] = useState(false);
@@ -83,9 +84,9 @@ function App() {
 
   return (
     <>
-      <div className='col-12 shadow d-flex justify-content-between px-4 py-2 sticky-top bg-light' style={{ height: 60, fontSize: 24 }}>
+      <div className='col-12 shadow d-flex justify-content-between px-4 py-2 sticky-top bg-light' style={{ height: 80, fontSize: 24 }}>
         <Link to="/" className='my-auto'>
-          Logo
+          <img height="60" src={logo} />
         </Link>
         <div className='d-flex'>
           {loginId == 0 ?
