@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
 
 function Dashboard() {
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [loginId, setloginId] = useState(false);
     let params = useParams();
     const [data, setData] = useState([
         {
@@ -59,10 +59,11 @@ function Dashboard() {
     const [selectedInstansi, setSelectedInstansi] = useState(0);
 
     useEffect(() => {
-        console.log(params.id)
-        if (localStorage.getItem("isAdmin") == "true") {
-            setIsAdmin(true);
-        }
+        // if (localStorage.getItem("loginId") == null) {
+        //     navigate("/login")
+        // } else {
+        //     setloginId(localStorage.getItem("loginId"));
+        // }
     }, [])
 
     return (

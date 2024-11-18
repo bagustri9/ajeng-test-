@@ -1,21 +1,26 @@
 import './Login.css';
 import CustomInput from './components/CustomInput';
 import { useNavigate } from "react-router-dom";
+import CustomDB from './components/CustomDB';
+import { useState } from 'react';
 
 function Login() {
 
     const navigate = useNavigate();
+    const db = CustomDB();
+    const [error, setError] = useState(false);
 
     function handleSubmit(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
         const values = Object.fromEntries(formData);
-        console.log(values);
-        if (values.email == "admin@gmail.com" && values.password == "admin123") {
-            localStorage.setItem('isAdmin', true);
-        } else {
-            localStorage.setItem('isAdmin', false);
+        var loginData = db.readAll("users").find(x => x.email == values.email && x.password == values.password)
+        if (loginData == undefined) {
+            setError(true);
+            return
         }
+        localStorage.setItem('loginId', loginData.id);
+
         navigate("/")
     };
 
@@ -26,10 +31,14 @@ function Login() {
                     <h2 className='text-center mb-4'>Logo</h2>
                     <h3>Login</h3>
                     <CustomInput label="Email"
+                        error={error}
+                        errorText="Wrong authentication! Please check your email"
                         type="email"
                         name='email'
                         required={true} />
                     <CustomInput label="Password"
+                        error={error}
+                        errorText="Wrong authentication! Please check your password"
                         type="password"
                         name='password'
                         required={true} />

@@ -11,6 +11,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.bg-merah-gelap{
+.bg-merah-gelap {
   background-color: var(--merah-gelap);
+}
+
+.notif-hover:hover {
+  background-color: #3af;
+  transition: 0.3s;
+}
+
+.notif-hover {
+  cursor: pointer;
+}
+
+.notif-hover:hover path{
+  stroke: #fff;
 }

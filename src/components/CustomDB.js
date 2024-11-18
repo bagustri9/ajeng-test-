@@ -3,9 +3,31 @@ import { useState, useEffect } from "react";
 function useMultiTableDB() {
     const dbName = 'multiTableDB';
     const [tables, setTables] = useState({
-        users: [],
+        users: [
+            {
+                id: 0,
+                name: "Admin",
+                email: "admin@admin.com",
+                password: "admin"
+            },
+            {
+                id: 1,
+                name: "Bank Umum",
+                email: "bank@umum.com",
+                password: "bank"
+            },
+            {
+                id: 2,
+                name: "Bank Privat",
+                email: "bank@privat.com",
+                password: "bank"
+            }
+        ],
         rpojk: [],
-        baris: []
+        baris: [],
+        responseRpojk: [],
+        responseBaris: [],
+        notification: []
     });
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -19,69 +41,52 @@ function useMultiTableDB() {
     }, []);
 
     // Save all tables
-    const saveTables = (newTables) => {
-        setTables(newTables);
-        localStorage.setItem(dbName, JSON.stringify(newTables));
-    };
-
-    // Export database to file
-    const exportDB = () => {
-        const blob = new Blob([JSON.stringify(tables, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'database.json';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
-
-    // Import database from file
-    const importDB = (file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const newData = JSON.parse(e.target.result);
-                setTables(newData);
-                localStorage.setItem(dbName, JSON.stringify(newData));
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-                alert('Error loading database file');
-            }
-        };
-        reader.readAsText(file);
-    };
+    useEffect(() => {
+        if (isLoaded) {  // Only save after initial load
+            localStorage.setItem(dbName, JSON.stringify(tables));
+        }
+    }, [tables, isLoaded]);
 
     // CRUD operations for any table
     const create = (tableName, item) => {
-        const newTables = {
-            ...tables,
-            [tableName]: [...tables[tableName], { id: Date.now(), ...item }]
-        };
-        saveTables(newTables);
+        const newData = { id: crypto.randomUUID(), ...item }
+        setTables(prevTables => ({
+            ...prevTables,
+            [tableName]: [...prevTables[tableName], newData]
+        }));
+        return newData;
     };
 
     const read = (tableName, id) => {
-        return tables[tableName].find(item => item.id === id);
+        var data = localStorage.getItem(dbName)
+        if (data == "") {
+            return null
+        }
+        return JSON.parse(data)[tableName].find(item => item.id === id);
+    };
+
+    const readAll = (tableName) => {
+        var data = localStorage.getItem(dbName)
+        if (data == "") {
+            return []
+        }
+        return JSON.parse(data)[tableName];
     };
 
     const update = (tableName, id, updates) => {
-        const newTables = {
-            ...tables,
-            [tableName]: tables[tableName].map(item =>
+        setTables(prevTables => ({
+            ...prevTables,
+            [tableName]: prevTables[tableName].map(item =>
                 item.id === id ? { ...item, ...updates } : item
             )
-        };
-        saveTables(newTables);
+        }));
     };
 
     const remove = (tableName, id) => {
-        const newTables = {
-            ...tables,
-            [tableName]: tables[tableName].filter(item => item.id !== id)
-        };
-        saveTables(newTables);
+        setTables(prevTables => ({
+            ...prevTables,
+            [tableName]: prevTables[tableName].filter(item => item.id !== id)
+        }));
     };
 
     // Get related records
@@ -94,11 +99,10 @@ function useMultiTableDB() {
         isLoaded,
         create,
         read,
+        readAll,
         update,
         remove,
-        getRelated,
-        importDB,
-        exportDB
+        getRelated
     };
 };
 

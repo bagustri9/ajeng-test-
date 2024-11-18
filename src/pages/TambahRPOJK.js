@@ -2,24 +2,80 @@ import React, { useEffect, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import './Dashboard.css';
 import { Button, Modal } from 'react-bootstrap';
-import CustomDB from '../components/CustomDB';
+import { useOutletContext, useParams } from 'react-router-dom';
 
 function Dashboard() {
-    const db = CustomDB();
     const TINYMCE_API_KEY = "32m4npow6fy9y56ayqpvfnqts7gjzq86xafspc9oajenkfeg";
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [loginId, setloginId] = useState(false);
     const [baris, setBaris] = useState([]);
-    const [judul, setJudul] = useState("");
+    const [rpojk, setRpojk] = useState([]);
     const [editData, setEditData] = useState(null);
+    const { Swal, navigate, db } = useOutletContext();
+    let params = useParams();
 
     useEffect(() => {
-        if (localStorage.getItem("isAdmin") == "true") {
-            setIsAdmin(true);
+        if (localStorage.getItem("loginId") == null) {
+            navigate("/login")
+        } else {
+            setloginId(localStorage.getItem("loginId"));
+        }
+        if (params.id != undefined) {
+            setBaris(db.readAll("baris").filter(x => x.rpojkid == params.id));
+            setRpojk(db.readAll("rpojk").find(x => x.id == params.id))
         }
     }, [])
 
-    function handleSave() {
-        db.create("rpojk", { judul: judul })
+    function handleSave(e) {
+        e.preventDefault();
+        var isPublished = false;
+        Swal.fire({
+            title: "Terbitkan RPOJK ?",
+            text: "Data akan disimpan. Apakah anda juga ingin menerbitkan RPOJK ?",
+            icon: "info",
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: "Terbitkan",
+            denyButtonText: "Tidak",
+            cancelButtonText: "Kembali",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                isPublished = true;
+            } else if (result.isDenied) {
+
+            } else {
+                return;
+            }
+            if (params.id == undefined) {
+                var rpojkDataBaru = db.create("rpojk", { judul: e.target[1].value, isPublished: isPublished, createdDate: new Date() });
+                baris.map((data) => {
+                    db.create("baris", { ...data, rpojkid: rpojkDataBaru.id });
+                });
+                Swal.fire({
+                    title: "Sukses!",
+                    text: "Data berhasil ditambahkan!",
+                    icon: "success"
+                }).then(() => {
+                    navigate("/")
+                });
+            } else {
+                db.update("rpojk", params.id, { judul: e.target[1].value, isPublished: isPublished });
+                var oldBaris = db.readAll("baris").filter(x => x.rpojkid == params.id);
+                console.log(oldBaris)
+                oldBaris.map((old) => {
+                    db.remove("baris", old.id)
+                });
+                baris.map((data) => {
+                    db.create("baris", { ...data, rpojkid: params.id });
+                });
+                Swal.fire({
+                    title: "Sukses!",
+                    text: "Data berhasil diupdate!",
+                    icon: "success"
+                }).then(() => {
+                    navigate("/")
+                });
+            }
+        });
     }
 
     return (
@@ -92,7 +148,7 @@ function Dashboard() {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setEditData(null)}>
-                        Close
+                        Batal
                     </Button>
                     <Button variant="primary" onClick={() => {
                         setBaris(old => {
@@ -107,7 +163,7 @@ function Dashboard() {
                         });
                         setEditData(null);
                     }}>
-                        Save Changes
+                        Tambah Baris
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -119,10 +175,15 @@ function Dashboard() {
             <div className='col-8 offset-2'>
                 <div className='card'>
                     <div className='card-body'>
-                        <div className='d-flex'>
-                            <label className='my-auto me-2'>Judul</label>
-                            <input onChange={(e) => setJudul(e.target.value)} value={judul} className="my-auto flex-grow-1" name="judul" required={true} />
-                        </div>
+                        <form onSubmit={handleSave}>
+                            <div className='d-flex mb-3 justify-content-end'>
+                                <button className='btn btn-primary'>Simpan Data</button>
+                            </div>
+                            <div className='d-flex'>
+                                <label className='my-auto me-2'>Judul</label>
+                                <input className="my-auto flex-grow-1" defaultValue={rpojk.judul} name="judul" required={true} />
+                            </div>
+                        </form>
                         <div className='table-responsive mt-4'>
                             <table className='table mt-2'>
                                 <thead>

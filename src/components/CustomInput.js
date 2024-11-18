@@ -9,6 +9,8 @@ const CustomInput = ({
   placeholder = "",
   required = false,
   name,
+  error = false,
+  errorText = "",
   className = ""
 }) => {
   const inputRef = useRef(null);
@@ -19,7 +21,7 @@ const CustomInput = ({
   };
 
   const handleInputChange = (e) => {
-    if(e.target.value == ""){
+    if (e.target.value == "") {
       setAnimationState("outfocus")
     } else {
       setAnimationState("onfocus")
@@ -40,6 +42,11 @@ const CustomInput = ({
         {label}
       </motion.div>
       <input
+        style={
+          {
+            border: (error ? "solid 1px rgb(255, 50, 50)" : "solid 1px rgb(118, 118, 118)")
+          }
+        }
         ref={inputRef}
         type={type}
         value={value}
@@ -47,7 +54,7 @@ const CustomInput = ({
         name={name}
         onFocus={() => setAnimationState("onfocus")}
         onBlur={() => {
-          if(inputRef.current.value == ""){
+          if (inputRef.current.value == "") {
             setAnimationState("outfocus")
           } else {
             setAnimationState("onfocus")
@@ -57,6 +64,9 @@ const CustomInput = ({
         required={required}
         className='p-2'
       />
+      <small className='text-danger'>
+        {error ? errorText : ""}
+      </small>
     </div>
   );
 };
