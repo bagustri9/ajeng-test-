@@ -1,104 +1,171 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
-import { Link, useParams } from 'react-router-dom';
-import { OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
+import { useOutletContext, useParams } from 'react-router-dom';
 
 function Dashboard() {
-    const [loginId, setloginId] = useState(false);
+    const { Swal, navigate, db } = useOutletContext();
     let params = useParams();
-    const [data, setData] = useState([
-        {
-            id: 1,
-            instansi: "Bank Umum",
-            pasal: [
-                {
-                    no: 1,
-                    penjelasan: "Contoh Penjelasan Bank Umum 1",
-                    tanggapan: "Contoh Tanggapan Bank Umum 1",
-                    tipe: 0
-                },
-                {
-                    no: 2,
-                    penjelasan: "Contoh Penjelasan Bank Umum 2",
-                    tanggapan: "Contoh Tanggapan Bank Umum 2",
-                    tipe: 1
-                },
-                {
-                    no: 3,
-                    penjelasan: "Contoh Penjelasan Bank Umum 3",
-                    tanggapan: "Contoh Tanggapan Bank Umum 3",
-                    tipe: 0
-                },
-            ]
-        },
-        {
-            id: 2,
-            instansi: "Bank Tidak Umum",
-            pasal: [
-                {
-                    no: 1,
-                    penjelasan: "Contoh Penjelasan Bank Tidak Umum 1",
-                    tanggapan: "Contoh Tanggapan Bank Tidak Umum 1",
-                    tipe: 0
-                },
-                {
-                    no: 2,
-                    penjelasan: "Contoh Penjelasan Bank Tidak Umum 2",
-                    tanggapan: "Contoh Tanggapan Bank Tidak Umum 2",
-                    tipe: 1
-                },
-                {
-                    no: 3,
-                    penjelasan: "Contoh Penjelasan Bank Tidak Umum 3",
-                    tanggapan: "Contoh Tanggapan Bank Tidak Umum 3",
-                    tipe: 0
-                },
-            ]
-        }
-    ])
+    const [data, setData] = useState({})
+    const [tableData, setTabelData] = useState([])
     const [selectedInstansi, setSelectedInstansi] = useState(0);
+    const [refresh, setRefresh] = useState(false);
+    const [loginId, setloginId] = useState(false);
 
     useEffect(() => {
-        // if (localStorage.getItem("loginId") == null) {
-        //     navigate("/login")
-        // } else {
-        //     setloginId(localStorage.getItem("loginId"));
-        // }
-    }, [])
+        if (localStorage.getItem("loginId") == null) {
+            navigate("/login")
+        } else {
+            setloginId(localStorage.getItem("loginId"));
+        }
+        var rpojk = db.readAll("rpojk").find(x => x.id == params.id);
+        var responseRpojk = db.readAll("responseRpojk").filter(x => x.rpojkId == params.id && x.status != "draft");
+        responseRpojk.map(x => {
+            x.user = db.readAll("users").find(y => y.id == x.instansi)
+        });
+        rpojk.responseRpojk = responseRpojk;
+        rpojk.responseRpojk.map(x => {
+            x.baris = db.readAll("baris").filter(x => x.rpojkid == params.id);
+            x.baris.map(y => {
+                y.response = db.readAll("responseBaris").find(z => z.barisId == y.id && x.id == z.responseRpojkId);
+            });
+        });
+        setData(rpojk)
+        console.log(rpojk)
+        console.log('refreshed')
+    }, [refresh])
+
+    useEffect(() => {
+        if (selectedInstansi != 0) {
+            var newData = data.responseRpojk.find(x => x.user.id == selectedInstansi).baris
+            setTabelData(newData)
+            console.log(newData)
+        }
+    }, [selectedInstansi])
 
     return (
         <div className=' col-12' style={{ paddingTop: 40, fontWeight: 600 }}>
             <div className='col-8 offset-2 mb-4'>
-                <select value={selectedInstansi} onChange={(e) => setSelectedInstansi(e.target.value)} class="form-select" aria-label="Default select example">
+                <select value={selectedInstansi} onChange={(e) => setSelectedInstansi(e.target.value)} className="form-select" aria-label="Default select example">
                     <option value={0} disabled>Pilih Instansi</option>
-                    {data.map(x => (
-                        <option value={x.id}>{x.instansi}</option>
-                    ))}
+                    {data.responseRpojk != undefined ? data.responseRpojk.map((x, index) => (
+                        <option key={"option-" + index} value={x.user.id}>{x.user.name}</option>
+                    )) : null}
                 </select>
             </div>
             <div className="card col-8 offset-2">
                 <div className="card-body shadow-sm p-4" style={{ minHeight: 550 }}>
+                    {selectedInstansi != 0 ?
+                        data.responseRpojk.find(x => x.user.id == selectedInstansi).status == "submitted" ?
+                            <div className='d-flex justify-content-end mb-3'>
+                                <div className='d-flex'>
+                                    <button className='btn btn-primary me-2' onClick={() => {
+                                        Swal.fire({
+                                            title: "Apakah anda yakin?",
+                                            text: "Data tidak dapat diubah setelah disimpan!",
+                                            icon: "info",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Ya, terima!",
+                                            cancelButtonText: "Batal",
+                                            reverseButtons: true
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                var responseRpojkId = data.responseRpojk.find(x => x.user.id == selectedInstansi).id
+                                                var currentData = db.readAll("responseRpojk").find(x => x.id == responseRpojkId)
+                                                currentData.status = "accepted"
+                                                db.update("responseRpojk", responseRpojkId, currentData)
+                                                db.create("notification", { instansi: loginId, rpojkId: params.id, isOpened: false, notifFor: data.responseRpojk.find(x => x.user.id == selectedInstansi).instansi })
+                                                Swal.fire({
+                                                    title: "Sukses!",
+                                                    text: "Tanggapan telah diterima!",
+                                                    icon: "success"
+                                                }).then(() => {
+                                                    setRefresh(old => !old);
+                                                });
+                                            }
+                                        });
+                                    }}>
+                                        Terima
+                                    </button>
+                                    <button className='btn btn-danger' onClick={() => {
+                                        Swal.fire({
+                                            title: "Apakah anda yakin?",
+                                            text: "Data tidak dapat diubah setelah disimpan!",
+                                            icon: "warning",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Ya, tolak!",
+                                            cancelButtonText: "Batal",
+                                            reverseButtons: true,
+                                            input: "textarea",
+                                            inputLabel: "Alasan Penolakan",
+                                            inputPlaceholder: "Type your message here...",
+                                            inputAttributes: {
+                                                "aria-label": "Type your message here"
+                                            },
+                                            inputValidator: (value) => {
+                                                if (!value) {
+                                                    return "Alasan Penolakan harus diisi !";
+                                                }
+                                            },
+                                            showCancelButton: true
+                                        }).then((result) => {
+                                            console.log(result)
+                                            if (result.isConfirmed) {
+                                                var responseRpojkId = data.responseRpojk.find(x => x.user.id == selectedInstansi).id
+                                                var currentData = db.readAll("responseRpojk").find(x => x.id == responseRpojkId)
+                                                currentData.status = "declined"
+                                                currentData.declinedReason = result.value
+                                                db.update("responseRpojk", responseRpojkId, currentData)
+                                                db.create("notification", { instansi: loginId, rpojkId: params.id, isOpened: false, notifFor: data.responseRpojk.find(x => x.user.id == selectedInstansi).instansi })
+                                                Swal.fire({
+                                                    title: "Sukses!",
+                                                    text: "Tanggapan telah ditolak!",
+                                                    icon: "success"
+                                                }).then(() => {
+                                                    setRefresh(old => !old);
+                                                });
+                                            }
+                                        });
+                                    }}>
+                                        Tolak
+                                    </button>
+                                </div>
+                            </div>
+                            : data.responseRpojk.find(x => x.user.id == selectedInstansi).status == "declined" ?
+                                <div className="alert alert-danger" role="alert">
+                                    Tanggapan telah ditolak !
+                                </div>
+                                : data.responseRpojk.find(x => x.user.id == selectedInstansi).status == "accepted" ?
+                                    <div className="alert alert-success" role="alert">
+                                        Tanggapan telah diterima !
+                                    </div> : null
+                        : null}
                     <table className="table">
                         <thead>
                             <tr className="bg-merah-gelap text-white">
-                                <th scope="col">Baris</th>
-                                <th scope="col">Penjelasan</th>
-                                <th scope="col">Tanggapan</th>
-                                <th scope="col">Tipe</th>
+                                <th>Baris</th>
+                                <th>Batang Tubuh</th>
+                                <th>Penjelasan</th>
+                                <th>Substantif</th>
+                                <th>Administratif</th>
+                                <th>Usulan Perubahan Batang Tubuh</th>
+                                <th>Usulan Perubahan Penjelasan</th>
                             </tr>
                         </thead>
                         <tbody>
                             {selectedInstansi != 0 ?
-                                data.find(x => x.id == selectedInstansi).pasal.map(x => (
-                                    <tr>
-                                        <td>{x.no}</td>
-                                        <td>{x.penjelasan}</td>
-                                        <td>{x.tanggapan}</td>
-                                        <td>{(x.tipe == 0 ? "Substantif" : "Administratif")}</td>
+                                tableData.map((x, index) => (
+                                    <tr key={`table-data-${index}`}>
+                                        <td>{index + 1}</td>
+                                        <td dangerouslySetInnerHTML={{ __html: x.tubuh }}></td>
+                                        <td dangerouslySetInnerHTML={{ __html: x.penjelasan }}></td>
+                                        <td dangerouslySetInnerHTML={{ __html: x.response?.substantif ?? "-" }}></td>
+                                        <td dangerouslySetInnerHTML={{ __html: x.response?.administratif ?? "-" }}></td>
+                                        <td dangerouslySetInnerHTML={{ __html: x.response?.usulanPerubahanBatangTubuh ?? "-" }}></td>
+                                        <td dangerouslySetInnerHTML={{ __html: x.response?.usulanPerubahanPenjelasan ?? "-" }}></td>
                                     </tr>
                                 )) :
                                 <tr>
-                                    <td colSpan={4} className='text-center'>
+                                    <td colSpan={7} className='text-center'>
                                         Pilih instansi terlebih dahulu !
                                     </td>
                                 </tr>

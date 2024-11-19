@@ -12,6 +12,8 @@ function App() {
   const [loginId, setloginId] = useState(false);
   const [notification, setNotification] = useState([]);
   const [response, setResponse] = useState([]);
+  const [rpojk, setRpojk] = useState([]);
+  const [users, setUsers] = useState([]);
   const [refresh, setRefresh] = useState(false);
   const CustomToggling = React.forwardRef(({ children, onClick }, ref) => (
 
@@ -45,21 +47,25 @@ function App() {
   ));
 
   useEffect(() => {
-    setNotification(db.readAll("notification"));
-    setResponse(data => {
-      var response = db.readAll("responseRpojk");
-      response.map(x => {
-        x.rpojk = db.readAll("rpojk").find(y => y.id == x.rpojkId)
-        x.user = db.readAll("users").find(y => y.id == x.instansi)
-      });
-      console.log(response)
-      return response
-    });
     if (localStorage.getItem("loginId") == null) {
       navigate("/login")
     } else {
       setloginId(localStorage.getItem("loginId"));
     }
+    setNotification(db.readAll("notification").filter(x => x.notifFor == localStorage.getItem("loginId")));
+    var rpojk = db.readAll("rpojk")
+    var users = db.readAll("users")
+    setRpojk(rpojk)
+    setUsers(users)
+
+    setResponse(data => {
+      var response = db.readAll("responseRpojk");
+      response.map(x => {
+        x.rpojk = rpojk.find(y => y.id == x.rpojkId)
+        x.user = users.find(y => y.id == x.instansi)
+      });
+      return response
+    });
   }, [refresh])
 
   const CustomSwal = withReactContent(Swal);
@@ -89,26 +95,26 @@ function App() {
           <img height="60" src={logo} />
         </Link>
         <div className='d-flex'>
-          {loginId == 0 ?
-            <div className='my-auto me-4'>
-              <Dropdown onToggle={(e) => {
-                if (e == false) {
-                  notification.map(x => {
-                    x.isOpened = true;
-                    db.update("notification", x.id, x);
-                  })
-                }
-              }}>
-                <Dropdown.Toggle as={CustomToggling} id="dropdown-custom-components">
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {notification.map((x, index) => (
-                    <Dropdown.Item key={"notification-" + index} eventKey="1">Instansi <b>{(response.find(y => y.id == x.responseRpojkId)?.user.name)}</b> memberikan tanggapan ke <b>{response.find(y => y.id == x.responseRpojkId)?.rpojk.judul}</b></Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-            : null}
+          <div className='my-auto me-4'>
+            <Dropdown onToggle={(e) => {
+              if (e == false) {
+                notification.map(x => {
+                  x.isOpened = true;
+                  db.update("notification", x.id, x);
+                })
+              }
+            }}>
+              <Dropdown.Toggle as={CustomToggling} id="dropdown-custom-components">
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {notification.map((x, index) => (
+                  loginId == 0 ?
+                    <Dropdown.Item key={"notification-" + index} eventKey="1">Instansi <b>{(users.find(y => y.id == x.instansi)?.name ?? "")}</b> memberikan tanggapan ke <b>{response.find(y => y.id == x.responseRpojkId)?.rpojk.judul}</b></Dropdown.Item>
+                    : <Dropdown.Item key={"notification-" + index} eventKey="1">Status tanggapan <b>{rpojk.find(y => y.id == x.rpojkId)?.judul ?? ""}</b> telah diubah oleh Admin</Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
           <div className='my-auto ps-4 d-flex' style={{ borderLeft: '1px solid #9FA3A9', height: 40, fontSize: 20 }}>
             <Dropdown className='d-flex'>
               <Dropdown.Toggle as={CustomToggle} id="dropdown-basic">

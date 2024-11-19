@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import { Link, useOutletContext } from 'react-router-dom';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function Dashboard() {
     var { navigate, db, Swal } = useOutletContext();
@@ -156,7 +157,17 @@ function Dashboard() {
                                                         : responses.find(y => y.rpojkId == x.id).status == "submitted" ?
                                                             <span className="badge rounded-pill bg-primary text-light">Proses Pengecekan</span>
                                                             : responses.find(y => y.rpojkId == x.id).status == "declined" ?
-                                                                <span className="badge rounded-pill bg-danger text-light">Ditolak</span>
+                                                                <OverlayTrigger
+                                                                    placement="top"
+                                                                    delay={{ show: 250, hide: 400 }}
+                                                                    overlay={(props) => (
+                                                                        <Tooltip id="button-tooltip" {...props}>
+                                                                          Alasan Ditolak : {responses.find(y => y.rpojkId == x.id).declinedReason}
+                                                                        </Tooltip>
+                                                                      )}
+                                                                >
+                                                                    <span className="badge rounded-pill bg-danger text-light">Ditolak</span>
+                                                                </OverlayTrigger>
                                                                 : responses.find(y => y.rpojkId == x.id).status == "accepted" ?
                                                                     <span className="badge rounded-pill bg-success text-light">Diterima</span>
                                                                     : null
@@ -166,16 +177,16 @@ function Dashboard() {
                                         <td>{`${new Date(x.createdDate).getHours()}:${new Date(x.createdDate).getMinutes()} ${new Date(x.createdDate).getDate()}/${new Date(x.createdDate).getMonth()}/${new Date(x.createdDate).getFullYear()}`}</td>
                                     </tr>
                                 ))}
-                                {rpojk.filter(x => x.isPublished).length == 0 ?
-                                    <tr>
-                                        <td colSpan={6} className='text-center'>Belum ada RPOJK yang diterbitkan!</td>
-                                    </tr> : null}
-                            </tbody>
+                            {rpojk.filter(x => x.isPublished).length == 0 ?
+                                <tr>
+                                    <td colSpan={6} className='text-center'>Belum ada RPOJK yang diterbitkan!</td>
+                                </tr> : null}
+                        </tbody>
                         </table>
                     }
-                </div>
             </div>
         </div>
+        </div >
     );
 }
 

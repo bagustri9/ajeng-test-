@@ -1,79 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
-import { Link, useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
 
 function Dashboard() {
-    const [loginId, setloginId] = useState(false);
+    const { Swal, navigate, db } = useOutletContext();
     let params = useParams();
-    const [data, setData] = useState([
-        {
-            id: 1,
-            instansi: "Bank Umum",
-            pasal: [
-                {
-                    no: 1,
-                    penjelasan: "Contoh Penjelasan Bank Umum 1",
-                    tanggapan: "Contoh Tanggapan Bank Umum 1",
-                    tipe: 0
-                },
-                {
-                    no: 2,
-                    penjelasan: "Contoh Penjelasan Bank Umum 2",
-                    tanggapan: "Contoh Tanggapan Bank Umum 2",
-                    tipe: 1
-                },
-                {
-                    no: 3,
-                    penjelasan: "Contoh Penjelasan Bank Umum 3",
-                    tanggapan: "Contoh Tanggapan Bank Umum 3",
-                    tipe: 0
-                },
-            ]
-        },
-        {
-            id: 2,
-            instansi: "Bank Tidak Umum",
-            pasal: [
-                {
-                    no: 1,
-                    penjelasan: "Contoh Penjelasan Bank Tidak Umum 1",
-                    tanggapan: "Contoh Tanggapan Bank Tidak Umum 1",
-                    tipe: 0
-                },
-                {
-                    no: 2,
-                    penjelasan: "Contoh Penjelasan Bank Tidak Umum 2",
-                    tanggapan: "Contoh Tanggapan Bank Tidak Umum 2",
-                    tipe: 1
-                },
-                {
-                    no: 3,
-                    penjelasan: "Contoh Penjelasan Bank Tidak Umum 3",
-                    tanggapan: "Contoh Tanggapan Bank Tidak Umum 3",
-                    tipe: 0
-                },
-            ]
-        }
-    ])
+    const [data, setData] = useState({})
+    const [tableData, setTabelData] = useState([])
     const [selectedBaris, setSelectedBaris] = useState(0);
+    const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
-        // if (localStorage.getItem("loginId") == null) {
-        //     navigate("/login")
-        // } else {
-        //     setloginId(localStorage.getItem("loginId"));
-        // }
-    }, [])
+        var rpojk = db.readAll("rpojk").find(x => x.id == params.id);
+        rpojk.baris = db.readAll("baris").filter(x => x.rpojkid == rpojk.id)
+        rpojk.baris.map(x => {
+            var responseBaris = db.readAll("responseBaris").filter(y =>
+                y.barisId == x.id &&
+                db.readAll("responseRpojk").find(z => z.id == y.responseRpojkId).status != "draft"
+            );
+            responseBaris.map(y => {
+                y.responseRpojk = db.readAll("responseRpojk").find(z => z.id == y.responseRpojkId)
+                y.user = db.readAll("users").find(z => z.id == y.responseRpojk.instansi)
+            })
+            x.responseBaris = responseBaris
+        })
+        setData(rpojk)
+        console.log(rpojk)
+    }, [refresh])
+
+    useEffect(() => {
+        var newData = data.baris == undefined ? [] : data.baris
+        console.log(newData)
+        setTabelData(newData)
+    }, [selectedBaris, data])
 
     return (
         <div className=' col-12' style={{ paddingTop: 40, fontWeight: 600 }}>
             <div className='col-8 offset-2 mb-4'>
                 <select value={selectedBaris} onChange={(e) => setSelectedBaris(e.target.value)} className="form-select" aria-label="Default select example">
                     <option value={0}>Semua Baris</option>
-                    <option value={1}>Baris ke-1</option>
-                    <option value={2}>Baris ke-2</option>
-                    <option value={3}>Baris ke-3</option>
+                    {data.baris != undefined ? data.baris.map((x, index) => (
+                        <option key={"option-" + index} value={index + 1}>Baris ke-{index + 1}</option>
+                    )) : null}
                 </select>
             </div>
             <div className="card col-8 offset-2">
@@ -81,24 +50,31 @@ function Dashboard() {
                     <table className="table">
                         <thead>
                             <tr className="bg-merah-gelap text-white">
-                                <th scope="col">Instansi</th>
-                                <th scope="col">Penjelasan</th>
-                                <th scope="col">Tanggapan</th>
-                                <th scope="col">Tipe</th>
+                                <th>Instansi</th>
+                                <th>Batang Tubuh</th>
+                                <th>Penjelasan</th>
+                                <th>Substantif</th>
+                                <th>Administratif</th>
+                                <th>Usulan Perubahan Batang Tubuh</th>
+                                <th>Usulan Perubahan Penjelasan</th>
                             </tr>
                         </thead>
                         <tbody>
                             {
-                                data.map((x, index) => (
-                                    x.pasal.filter(y => selectedBaris == 0 ? true : y.no == selectedBaris).map((y, i) => (
-                                        <tr key={`baris-${index}-${i}`}>
-                                            <td>{x.instansi}</td>
-                                            <td>{y.penjelasan}</td>
-                                            <td>{y.tanggapan}</td>
-                                            <td>{(y.tipe == 0 ? "Substantif" : "Administratif")}</td>
-                                        </tr>
-                                    ))
-
+                                tableData.map((x, index) => (
+                                    index == selectedBaris-1 || selectedBaris == 0 ?
+                                        x.responseBaris.map((y, indexY) => (
+                                            <tr key={`table-data-${index}-${indexY}`}>
+                                                <td dangerouslySetInnerHTML={{ __html: y.user.name }}></td>
+                                                <td dangerouslySetInnerHTML={{ __html: x.tubuh }}></td>
+                                                <td dangerouslySetInnerHTML={{ __html: x.penjelasan }}></td>
+                                                <td dangerouslySetInnerHTML={{ __html: y.substantif }}></td>
+                                                <td dangerouslySetInnerHTML={{ __html: y.administratif }}></td>
+                                                <td dangerouslySetInnerHTML={{ __html: y.usulanPerubahanBatangTubuh }}></td>
+                                                <td dangerouslySetInnerHTML={{ __html: y.usulanPerubahanPenjelasan }}></td>
+                                            </tr>
+                                        ))
+                                        : null
                                 ))
                             }
                         </tbody>

@@ -28,17 +28,15 @@ function TambahResponse() {
         if (params.id != undefined) {
             var baris = db.readAll("baris").filter(x => x.rpojkid == params.id)
             var rpojk = db.readAll("rpojk").find(x => x.id == params.id);
-            console.log(baris)
             setBaris(baris);
             setRpojk(rpojk);
-            var existResponseRpojk = db.readAll("responseRpojk").find(y => y.rpojkId == params.id)
+            console.log(localStorage.getItem("loginId"))
+            var existResponseRpojk = db.readAll("responseRpojk").find(y => y.rpojkId == params.id && y.instansi == localStorage.getItem("loginId"))
             console.log(existResponseRpojk)
             setResponseRpojk({
                 rpojkId: rpojk.id,
                 status: existResponseRpojk != undefined ? existResponseRpojk.status : "",
                 declinedReason: existResponseRpojk != undefined ? existResponseRpojk.declinedReason : "",
-                fileName: existResponseRpojk != undefined ? existResponseRpojk.fileName : "",
-                fileUrl: existResponseRpojk != undefined ? existResponseRpojk.fileUrl : "",
             });
             if (existResponseRpojk != undefined) {
                 setResponseBaris(db.readAll("responseBaris").filter(y => y.responseRpojkId == existResponseRpojk.id))
@@ -48,28 +46,15 @@ function TambahResponse() {
 
     function handleSave(e) {
         e.preventDefault();
-        console.log(e)
-        const file = e.target[0].files[0];
-        var fileUrl = null;
-        if (file) {
-            if (file.type === 'application/pdf') {
-                fileUrl = URL.createObjectURL(file);
-            } else {
-                alert('Please upload PDF files only');
-                return;
-            }
-        }
-        var defaultFileUrl = file ? fileUrl : responseRpojk?.fileUrl ?? "";
-        var defaultFileName = file ? file.name : responseRpojk?.fileName ?? "";
         Swal.fire({
             title: "Tambah Tanggapan ?",
-            text: defaultFileName != "" ? "Data dapat difinalisasi. Apakah akan anda finalisasi?" : "Unggah surat untuk memfinalisasi data! Simpan sebagai draft ?",
+            text: "Apakah tanggapan akan anda finalisasi?",
             icon: "info",
-            showDenyButton: defaultFileName != "" ? true : false,
+            showDenyButton: true,
             showCancelButton: true,
-            confirmButtonText: defaultFileName != "" ? "Finalisasi" : "Simpan",
-            denyButtonText: "Tidak, Simpan Saja",
-            cancelButtonText: "Kembali",
+            confirmButtonText: "Finalisasi",
+            denyButtonText: "Simpan Sebagai Draft",
+            cancelButtonText: "Batal",
         }).then((result) => {
             if (result.isConfirmed) {
 
@@ -78,11 +63,11 @@ function TambahResponse() {
             } else {
                 return;
             }
-            var oldResponseRpojk = db.readAll("responseRpojk").find(x => x.rpojkId == params.id)
+            var oldResponseRpojk = db.readAll("responseRpojk").find(x => x.rpojkId == params.id && x.instansi == loginId)
             var isUpdate = false
             if (oldResponseRpojk != undefined) {
                 db.remove("responseRpojk", oldResponseRpojk.id)
-                var oldResponseBaris = db.readAll("responseBaris").filter(x => x.responseRpojkId == responseRpojk.id);
+                var oldResponseBaris = db.readAll("responseBaris").filter(x => x.responseRpojkId == oldResponseRpojk.id);
                 oldResponseBaris.map((old) => {
                     db.remove("responseBaris", old.id)
                 });
@@ -90,14 +75,14 @@ function TambahResponse() {
             }
             var createResponse = db.create("responseRpojk",
                 {
-                    instansi: loginId, ...responseRpojk, fileUrl: defaultFileUrl, fileName: defaultFileName, status: defaultFileName != "" && result.isConfirmed ? "submitted" : "draft"
+                    instansi: loginId, ...responseRpojk, status: result.isConfirmed ? "submitted" : "draft"
                 }
             );
             responseBaris.map((data) => {
                 db.create("responseBaris", { ...data, responseRpojkId: createResponse.id });
             });
-            if (defaultFileName != "" && result.isConfirmed) {
-                db.create("notification", { responseRpojkId: createResponse.id, isOpened: false })
+            if (result.isConfirmed) {
+                db.create("notification", { instansi: loginId, rpojkId: createResponse.rpojkId, isOpened: false, notifFor: 0 })
             }
             Swal.fire({
                 title: "Sukses!",
@@ -169,9 +154,9 @@ function TambahResponse() {
                         />
                     </div>
                     <div className='mb-4'>
-                        <label className='ms-2'><b>2. Usulan Perubahan</b></label>
+                        <label className='ms-2'><b>3. Usulan Perubahan Batang Tubuh</b></label>
                         <Editor
-                            initialValue={editData?.usulanPerubahan ?? ""}
+                            initialValue={editData?.usulanPerubahanBatangTubuh ?? ""}
                             apiKey={TINYMCE_API_KEY}
                             init={{
                                 height: 200,
@@ -187,7 +172,33 @@ function TambahResponse() {
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
                                     setEditData(old => {
-                                        old.usulanPerubahan = content
+                                        old.usulanPerubahanBatangTubuh = content
+                                        return old;
+                                    })
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className='mb-4'>
+                        <label className='ms-2'><b>4. Usulan Perubahan Penjelasan</b></label>
+                        <Editor
+                            initialValue={editData?.usulanPerubahanPenjelasan ?? ""}
+                            apiKey={TINYMCE_API_KEY}
+                            init={{
+                                height: 200,
+                                menubar: true,
+                                plugins: [
+                                    'lists'
+                                ],
+                                toolbar: 'undo redo | formatselect | ' +
+                                    'bold italic backcolor | alignleft aligncenter ' +
+                                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                                    'removeformat | help'
+                            }}
+                            onEditorChange={(content, editor) => {
+                                if (editData != null) {
+                                    setEditData(old => {
+                                        old.usulanPerubahanPenjelasan = content
                                         return old;
                                     })
                                 }
@@ -229,20 +240,6 @@ function TambahResponse() {
                     <div className='card-body'>
                         <form onSubmit={handleSave}>
                             <div className='d-flex justify-content-between mb-4'>
-                                <div className="mb-3">
-                                    <label htmlFor="formFile" className="form-label">Lampiran Surat (.pdf)</label>
-                                    <input className="form-control" type="file" id="formFile" accept="application/pdf" />
-                                    {responseRpojk.fileName && (
-                                        <div>
-                                            <p>Selected file: {responseRpojk.fileName}</p>
-                                            {responseRpojk.fileUrl && (
-                                                <a href={responseRpojk.fileUrl} target="_blank" rel="noopener noreferrer">
-                                                    View PDF
-                                                </a>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
                                 <div className='d-flex'>
                                     <button className='my-auto btn btn-primary' type='submit'>Simpan Tanggapan</button>
                                 </div>
@@ -257,7 +254,8 @@ function TambahResponse() {
                                         <td>Penjelasan</td>
                                         <td>Tanggapan Substantif</td>
                                         <td>Tanggapan Administratif</td>
-                                        <td>Usulan Perubahan</td>
+                                        <td>Usulan Perubahan Batang Tubuh</td>
+                                        <td>Usulan Perubahan Penjelasan</td>
                                         <td style={{ width: '4%' }}></td>
                                     </tr>
                                 </thead>
@@ -278,7 +276,10 @@ function TambahResponse() {
                                                 <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.administratif ?? "-" }} />
                                             </td>
                                             <td>
-                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahan ?? "-" }} />
+                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanBatangTubuh ?? "-" }} />
+                                            </td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanPenjelasan ?? "-" }} />
                                             </td>
                                             <td>
                                                 {row.dapatDitanggapi ? responseBaris.filter(x => x.barisId == row.id).length > 0 ?
@@ -288,7 +289,8 @@ function TambahResponse() {
                                                                 {
                                                                     substantif: responseBaris.find(x => x.barisId == row.id)?.substantif ?? "",
                                                                     administratif: responseBaris.find(x => x.barisId == row.id)?.administratif ?? "",
-                                                                    usulanPerubahan: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahan ?? "",
+                                                                    usulanPerubahanBatangTubuh: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanBatangTubuh ?? "",
+                                                                    usulanPerubahanPenjelasan: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanPenjelasan ?? "",
                                                                     barisId: row.id,
                                                                     responseRpojkId: responseRpojk.id
                                                                 }
@@ -305,7 +307,8 @@ function TambahResponse() {
                                                                 {
                                                                     substantif: "",
                                                                     administratif: "",
-                                                                    usulanPerubahan: "",
+                                                                    usulanPerubahanBatangTubuh: "",
+                                                                    usulanPerubahanPenjelasan: "",
                                                                     barisId: row.id,
                                                                     responseRpojkId: responseRpojk.id
                                                                 }

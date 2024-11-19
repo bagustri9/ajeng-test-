@@ -35,7 +35,7 @@ function Dashboard() {
             showCancelButton: true,
             showDenyButton: true,
             confirmButtonText: "Terbitkan",
-            denyButtonText: "Tidak",
+            denyButtonText: "Simpan sebagai Draft",
             cancelButtonText: "Kembali",
         }).then((result) => {
             if (result.isConfirmed) {
@@ -137,14 +137,14 @@ function Dashboard() {
                             }}
                         />
                     </div>
-                    <div className='mb-4'>
+                    {/* <div className='mb-4'>
                         <label className='ms-2'><b>3. Dapat Ditanggapi ? </b></label>
                         <input className='ms-2' type='checkbox' defaultChecked={editData == null ? false : editData.dapatDitanggapi} onChange={() => setEditData(old => {
                             var newData = { ...old }
                             newData.dapatDitanggapi = !newData.dapatDitanggapi
                             return newData
                         })} />
-                    </div>
+                    </div> */}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setEditData(null)}>
@@ -191,7 +191,7 @@ function Dashboard() {
                                         <td className='col-1'>Baris ke-</td>
                                         <td className='col-4'>Batang Tubuh</td>
                                         <td className='col-4'>Penjelasan</td>
-                                        <td className='col-2'>Dapat Ditanggapi</td>
+                                        {/* <td className='col-2'>Dapat Ditanggapi</td> */}
                                         <td>Aksi</td>
                                     </tr>
                                 </thead>
@@ -207,13 +207,13 @@ function Dashboard() {
                                                 <div dangerouslySetInnerHTML={{ __html: row.penjelasan }}>
                                                 </div>
                                             </td>
-                                            <td>
+                                            {/* <td>
                                                 <input type='checkbox' checked={row.dapatDitanggapi} onChange={(e) => setBaris(old => {
                                                     var newData = [...old];
                                                     newData[index].dapatDitanggapi = !newData[index].dapatDitanggapi
                                                     return newData;
                                                 })} />
-                                            </td>
+                                            </td> */}
                                             <td>
                                                 <div className='d-flex'>
                                                     <button className='p-1 btn btn-success d-flex text-white me-1' onClick={() => {
@@ -250,7 +250,7 @@ function Dashboard() {
                                     setEditData({
                                         tubuh: "",
                                         penjelasan: "",
-                                        dapatDitanggapi: false,
+                                        dapatDitanggapi: true,
                                         urutan: urut + 1,
                                     })
                                 }}>+ Tambah Baris Baru</button>
