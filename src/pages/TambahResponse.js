@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { Button, Modal } from 'react-bootstrap';
 import { useOutletContext, useParams } from 'react-router-dom';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 function TambahResponse() {
     const TINYMCE_API_KEY = "32m4npow6fy9y56ayqpvfnqts7gjzq86xafspc9oajenkfeg";
@@ -249,14 +250,33 @@ function TambahResponse() {
                             <table className='table mt-2'>
                                 <thead>
                                     <tr className='bg-merah-gelap text-white'>
-                                        <td style={{ width: '6%' }}>Baris ke-</td>
-                                        <td>Batang Tubuh</td>
-                                        <td>Penjelasan</td>
-                                        <td>Tanggapan Substantif</td>
-                                        <td>Tanggapan Administratif</td>
-                                        <td>Usulan Perubahan Batang Tubuh</td>
-                                        <td>Usulan Perubahan Penjelasan</td>
-                                        <td style={{ width: '4%' }}></td>
+                                        <td style={{ minWidth: '10%' }}>Baris ke-</td>
+                                        <td style={{minWidth:400}}>Batang Tubuh</td>
+                                        <td style={{minWidth:400}}>Penjelasan</td>
+                                        <td style={{minWidth:400}}>
+                                            <OverlayTrigger
+                                                placement="top"
+                                                delay={{ show: 250, hide: 400 }}
+                                                overlay={(props) => (
+                                                    <Tooltip id="button-tooltip" {...props}>
+                                                        Nih contoh
+                                                    </Tooltip>
+                                                )}
+                                            >
+                                                <div className='d-flex'>
+                                                    <span>
+                                                        Tanggapan substantif &nbsp;
+                                                    </span>
+                                                    <span className="my-auto material-symbols-outlined">
+                                                        help
+                                                    </span>
+                                                </div>
+                                            </OverlayTrigger>
+                                        </td>
+                                        <td style={{minWidth:400}}>Tanggapan Administratif</td>
+                                        <td style={{minWidth:400}}>Usulan Perubahan Batang Tubuh</td>
+                                        <td style={{minWidth:400}}>Usulan Perubahan Penjelasan</td>
+                                        <td style={{ width: '4%',  }}></td>
                                     </tr>
                                 </thead>
                                 <tbody>
