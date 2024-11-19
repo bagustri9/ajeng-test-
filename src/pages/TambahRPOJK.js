@@ -29,12 +29,12 @@ function Dashboard() {
         e.preventDefault();
         var isPublished = false;
         Swal.fire({
-            title: "Terbitkan RPOJK ?",
+            title: "Rilis RPOJK ?",
             text: "Data akan disimpan. Apakah anda juga ingin menerbitkan RPOJK ?",
             icon: "info",
             showCancelButton: true,
             showDenyButton: true,
-            confirmButtonText: "Terbitkan",
+            confirmButtonText: "Rilis",
             denyButtonText: "Simpan sebagai Draft",
             cancelButtonText: "Kembali",
         }).then((result) => {

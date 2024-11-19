@@ -103,9 +103,9 @@ function TambahResponse() {
                 </Modal.Header>
                 <Modal.Body>
                     <div className='mb-4'>
-                        <label className='ms-2'><b>1. Tanggapan Substantif</b></label>
+                        <label className='ms-2'><b>1. Tanggapan Batang Tubuh Substantif</b></label>
                         <Editor
-                            initialValue={editData?.substantif ?? ""}
+                            initialValue={editData?.batangSubstantif ?? ""}
                             apiKey={TINYMCE_API_KEY}
                             init={{
                                 height: 200,
@@ -116,12 +116,13 @@ function TambahResponse() {
                                 toolbar: 'undo redo | formatselect | ' +
                                     'bold italic backcolor | alignleft aligncenter ' +
                                     'alignright alignjustify | bullist numlist outdent indent | ' +
-                                    'removeformat | help'
+                                    'removeformat | help',
+                                placeholder: `Tanggapan substantif: tanggapan yang bersifat mengubah isi atau pokok inti atau makna dari bagian tubuh dan/atau penjelasan peraturan. Contoh: memperjelas kriteria Lembaga penunjang dan jenis LP yang dimaksud. Apakah termasuk Lembaga pengayom?`
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
                                     setEditData(old => {
-                                        old.substantif = content
+                                        old.batangSubstantif = content
                                         return old;
                                     })
                                 }
@@ -129,9 +130,9 @@ function TambahResponse() {
                         />
                     </div>
                     <div className='mb-4'>
-                        <label className='ms-2'><b>2. Tanggapan Administratif</b></label>
+                        <label className='ms-2'><b>2. Tanggapan Batang Tubuh Administratif</b></label>
                         <Editor
-                            initialValue={editData?.administratif ?? ""}
+                            initialValue={editData?.batangAdministratif ?? ""}
                             apiKey={TINYMCE_API_KEY}
                             init={{
                                 height: 200,
@@ -142,12 +143,15 @@ function TambahResponse() {
                                 toolbar: 'undo redo | formatselect | ' +
                                     'bold italic backcolor | alignleft aligncenter ' +
                                     'alignright alignjustify | bullist numlist outdent indent | ' +
-                                    'removeformat | help'
+                                    'removeformat | help',
+                                placeholder: `Tanggapan administratif: tanggapan terhadap ejaan, tata bahasa, peristilahan, singkatan, dan kesalahan penulisan kata yang tidak mempengaruhi makna bagian tubuh dan penjelasan peraturan
+                                    Contoh:
+                                    istilah “selain produktif” diganti “non produktif”.`
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
                                     setEditData(old => {
-                                        old.administratif = content
+                                        old.batangAdministratif = content
                                         return old;
                                     })
                                 }
@@ -155,7 +159,63 @@ function TambahResponse() {
                         />
                     </div>
                     <div className='mb-4'>
-                        <label className='ms-2'><b>3. Usulan Perubahan Batang Tubuh</b></label>
+                        <label className='ms-2'><b>3. Tanggapan Penjelasan Substantif</b></label>
+                        <Editor
+                            initialValue={editData?.penjelasanSubstantif ?? ""}
+                            apiKey={TINYMCE_API_KEY}
+                            init={{
+                                height: 200,
+                                menubar: true,
+                                plugins: [
+                                    'lists'
+                                ],
+                                toolbar: 'undo redo | formatselect | ' +
+                                    'bold italic backcolor | alignleft aligncenter ' +
+                                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                                    'removeformat | help',
+                                placeholder: `Tanggapan substantif: tanggapan yang bersifat mengubah isi atau pokok inti atau makna dari bagian tubuh dan/atau penjelasan peraturan. Contoh: memperjelas kriteria Lembaga penunjang dan jenis LP yang dimaksud. Apakah termasuk Lembaga pengayom?`
+                            }}
+                            onEditorChange={(content, editor) => {
+                                if (editData != null) {
+                                    setEditData(old => {
+                                        old.penjelasanSubstantif = content
+                                        return old;
+                                    })
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className='mb-4'>
+                        <label className='ms-2'><b>2. Tanggapan Penjelasan Administratif</b></label>
+                        <Editor
+                            initialValue={editData?.penjelasanAdministratif ?? ""}
+                            apiKey={TINYMCE_API_KEY}
+                            init={{
+                                height: 200,
+                                menubar: true,
+                                plugins: [
+                                    'lists'
+                                ],
+                                toolbar: 'undo redo | formatselect | ' +
+                                    'bold italic backcolor | alignleft aligncenter ' +
+                                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                                    'removeformat | help',
+                                placeholder: `Tanggapan administratif: tanggapan terhadap ejaan, tata bahasa, peristilahan, singkatan, dan kesalahan penulisan kata yang tidak mempengaruhi makna bagian tubuh dan penjelasan peraturan
+                                    Contoh:
+                                    istilah “selain produktif” diganti “non produktif”.`
+                            }}
+                            onEditorChange={(content, editor) => {
+                                if (editData != null) {
+                                    setEditData(old => {
+                                        old.penjelasanAdministratif = content
+                                        return old;
+                                    })
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className='mb-4'>
+                        <label className='ms-2'><b>5. Usulan Perubahan Batang Tubuh</b></label>
                         <Editor
                             initialValue={editData?.usulanPerubahanBatangTubuh ?? ""}
                             apiKey={TINYMCE_API_KEY}
@@ -181,7 +241,7 @@ function TambahResponse() {
                         />
                     </div>
                     <div className='mb-4'>
-                        <label className='ms-2'><b>4. Usulan Perubahan Penjelasan</b></label>
+                        <label className='ms-2'><b>6. Usulan Perubahan Penjelasan</b></label>
                         <Editor
                             initialValue={editData?.usulanPerubahanPenjelasan ?? ""}
                             apiKey={TINYMCE_API_KEY}
@@ -250,65 +310,31 @@ function TambahResponse() {
                             <table className='table mt-2'>
                                 <thead>
                                     <tr className='bg-merah-gelap text-white'>
-                                        <td style={{ minWidth: '10%' }}>Baris ke-</td>
-                                        <td style={{minWidth:400}}>Batang Tubuh</td>
-                                        <td style={{minWidth:400}}>Penjelasan</td>
-                                        <td style={{minWidth:400}}>
-                                            <OverlayTrigger
-                                                placement="top"
-                                                delay={{ show: 250, hide: 400 }}
-                                                overlay={(props) => (
-                                                    <Tooltip id="button-tooltip" {...props}>
-                                                        Nih contoh
-                                                    </Tooltip>
-                                                )}
-                                            >
-                                                <div className='d-flex'>
-                                                    <span>
-                                                        Tanggapan substantif &nbsp;
-                                                    </span>
-                                                    <span className="my-auto material-symbols-outlined">
-                                                        help
-                                                    </span>
-                                                </div>
-                                            </OverlayTrigger>
-                                        </td>
-                                        <td style={{minWidth:400}}>Tanggapan Administratif</td>
-                                        <td style={{minWidth:400}}>Usulan Perubahan Batang Tubuh</td>
-                                        <td style={{minWidth:400}}>Usulan Perubahan Penjelasan</td>
-                                        <td style={{ width: '4%',  }}></td>
+                                        <td style={{ width: '4%', }}>Aksi</td>
+                                        <td style={{ minWidth: 100 }}>Baris ke-</td>
+                                        <td style={{ minWidth: 400 }}>Batang Tubuh</td>
+                                        <td style={{ minWidth: 400 }}>Penjelasan</td>
+                                        <td style={{ minWidth: 400 }}>Tanggapan Batang Tubuh Substantif</td>
+                                        <td style={{ minWidth: 400 }}>Tanggapan Batang Tubuh Administratif</td>
+                                        <td style={{ minWidth: 400 }}>Tanggapan Penjelasan Substantif</td>
+                                        <td style={{ minWidth: 400 }}>Tanggapan Penjelasan Administratif</td>
+                                        <td style={{ minWidth: 400 }}>Usulan Perubahan Batang Tubuh</td>
+                                        <td style={{ minWidth: 400 }}>Usulan Perubahan Penjelasan</td>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {baris.map((row, index) => (
                                         <tr key={`baris-${index}`}>
-                                            <td>{(index + 1)}</td>
-                                            <td>
-                                                <div dangerouslySetInnerHTML={{ __html: row.tubuh }} />
-                                            </td>
-                                            <td>
-                                                <div dangerouslySetInnerHTML={{ __html: row.penjelasan }} />
-                                            </td>
-                                            <td>
-                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.substantif ?? "-" }} />
-                                            </td>
-                                            <td>
-                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.administratif ?? "-" }} />
-                                            </td>
-                                            <td>
-                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanBatangTubuh ?? "-" }} />
-                                            </td>
-                                            <td>
-                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanPenjelasan ?? "-" }} />
-                                            </td>
                                             <td>
                                                 {row.dapatDitanggapi ? responseBaris.filter(x => x.barisId == row.id).length > 0 ?
                                                     <div className='d-flex'>
-                                                        <button className='p-1 btn btn-success d-flex text-white me-1' onClick={() => {
+                                                        <button title='Ubah Tanggapan' className='p-1 btn btn-success d-flex text-white me-1' onClick={() => {
                                                             setEditData(
                                                                 {
-                                                                    substantif: responseBaris.find(x => x.barisId == row.id)?.substantif ?? "",
-                                                                    administratif: responseBaris.find(x => x.barisId == row.id)?.administratif ?? "",
+                                                                    batangSubstantif: responseBaris.find(x => x.barisId == row.id)?.batangSubstantif ?? "",
+                                                                    batangAdministratif: responseBaris.find(x => x.barisId == row.id)?.batangAdministratif ?? "",
+                                                                    penjelasanSubstantif: responseBaris.find(x => x.barisId == row.id)?.penjelasanSubstantif ?? "",
+                                                                    penjelasanAdministratif: responseBaris.find(x => x.barisId == row.id)?.penjelasanAdministratif ?? "",
                                                                     usulanPerubahanBatangTubuh: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanBatangTubuh ?? "",
                                                                     usulanPerubahanPenjelasan: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanPenjelasan ?? "",
                                                                     barisId: row.id,
@@ -322,11 +348,13 @@ function TambahResponse() {
                                                         </button>
                                                     </div> :
                                                     <div className='d-flex'>
-                                                        <button className='p-1 btn btn-primary d-flex text-white me-1' onClick={() => {
+                                                        <button title='Tambah Tanggapan' className='p-1 btn btn-primary d-flex text-white me-1' onClick={() => {
                                                             setEditData(
                                                                 {
-                                                                    substantif: "",
-                                                                    administratif: "",
+                                                                    batangSubstantif: "",
+                                                                    batangAdministratif: "",
+                                                                    penjelasanSubstantif: "",
+                                                                    penjelasanAdministratif: "",
                                                                     usulanPerubahanBatangTubuh: "",
                                                                     usulanPerubahanPenjelasan: "",
                                                                     barisId: row.id,
@@ -340,6 +368,31 @@ function TambahResponse() {
                                                         </button>
                                                     </div>
                                                     : null}
+                                            </td>
+                                            <td>{(index + 1)}</td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: row.tubuh }} />
+                                            </td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: row.penjelasan }} />
+                                            </td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.batangSubstantif ?? "-" }} />
+                                            </td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.batangAdministratif ?? "-" }} />
+                                            </td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.penjelasanSubstantif ?? "-" }} />
+                                            </td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.penjelasanAdministratif ?? "-" }} />
+                                            </td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanBatangTubuh ?? "-" }} />
+                                            </td>
+                                            <td>
+                                                <div dangerouslySetInnerHTML={{ __html: responseBaris.find(x => x.barisId == row.id)?.usulanPerubahanPenjelasan ?? "-" }} />
                                             </td>
                                         </tr>
                                     ))}

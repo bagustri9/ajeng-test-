@@ -50,7 +50,7 @@ function Dashboard() {
                                             <th className='col-1' onClick={() => { if (!x.isPublished) navigate("/rpojk/tambah/" + x.id) }} scope="row">{index + 1}</th>
                                             <td onClick={() => { if (!x.isPublished) navigate("/rpojk/tambah/" + x.id) }}>{x.judul}</td>
                                             <td className='col-2' onClick={() => { if (!x.isPublished) navigate("/rpojk/tambah/" + x.id) }}>
-                                                {(x.isPublished ? <span className="badge bg-success text-light my-auto">Telah Terbit</span> : <span className="badge bg-warning text-light my-auto">Draft</span>)}
+                                                {(x.isPublished ? <span className="badge bg-success text-light my-auto">Telah Rilis</span> : <span className="badge bg-warning text-light my-auto">Draft</span>)}
                                             </td>
                                             <td className='col-2'>
                                                 <div className='d-flex justify-content-start'>
@@ -62,7 +62,7 @@ function Dashboard() {
                                                                     publish
                                                                 </span>&nbsp;
                                                                 <span className='my-auto'>
-                                                                    Terbitkan
+                                                                    Rilis
                                                                 </span>
                                                             </button>
                                                             <button onClick={() => {
@@ -121,7 +121,7 @@ function Dashboard() {
                                     ))}
                                     {rpojk.length == 0 ?
                                         <tr>
-                                            <td colSpan={3} className='text-center'>Belum ada RPOJK!</td>
+                                            <td colSpan={4} className='text-center'>Belum ada RPOJK!</td>
                                         </tr> : null}
                                 </tbody>
                             </table>
@@ -153,9 +153,9 @@ function Dashboard() {
                                                 responses.find(y => y.rpojkId == x.id) == undefined ?
                                                     <span className="badge rounded-pill bg-secondary">Belum Diisi</span>
                                                     : responses.find(y => y.rpojkId == x.id).status == "draft" ?
-                                                        <span className="badge rounded-pill bg-warning text-light">Dalam Pengerjaan</span>
+                                                        <span className="badge rounded-pill bg-warning text-light">Draft</span>
                                                         : responses.find(y => y.rpojkId == x.id).status == "submitted" ?
-                                                            <span className="badge rounded-pill bg-primary text-light">Proses Pengecekan</span>
+                                                            <span className="badge rounded-pill bg-primary text-light">Telah Dikirim</span>
                                                             : responses.find(y => y.rpojkId == x.id).status == "declined" ?
                                                                 <OverlayTrigger
                                                                     placement="top"
@@ -179,7 +179,7 @@ function Dashboard() {
                                 ))}
                             {rpojk.filter(x => x.isPublished).length == 0 ?
                                 <tr>
-                                    <td colSpan={6} className='text-center'>Belum ada RPOJK yang diterbitkan!</td>
+                                    <td colSpan={6} className='text-center'>Belum ada RPOJK yang dirilis!</td>
                                 </tr> : null}
                         </tbody>
                         </table>

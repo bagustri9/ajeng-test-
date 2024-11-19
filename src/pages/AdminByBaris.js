@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import { useOutletContext, useParams } from 'react-router-dom';
-import { OverlayTrigger, Tooltip, Dropdown } from 'react-bootstrap';
 
 function Dashboard() {
     const { Swal, navigate, db } = useOutletContext();
@@ -47,38 +46,44 @@ function Dashboard() {
             </div>
             <div className="card col-8 offset-2">
                 <div className="card-body shadow-sm p-4" style={{ minHeight: 550 }}>
-                    <table className="table">
-                        <thead>
-                            <tr className="bg-merah-gelap text-white">
-                                <th>Instansi</th>
-                                <th>Batang Tubuh</th>
-                                <th>Penjelasan</th>
-                                <th>Substantif</th>
-                                <th>Administratif</th>
-                                <th>Usulan Perubahan Batang Tubuh</th>
-                                <th>Usulan Perubahan Penjelasan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                tableData.map((x, index) => (
-                                    index == selectedBaris-1 || selectedBaris == 0 ?
-                                        x.responseBaris.map((y, indexY) => (
-                                            <tr key={`table-data-${index}-${indexY}`}>
-                                                <td dangerouslySetInnerHTML={{ __html: y.user.name }}></td>
-                                                <td dangerouslySetInnerHTML={{ __html: x.tubuh }}></td>
-                                                <td dangerouslySetInnerHTML={{ __html: x.penjelasan }}></td>
-                                                <td dangerouslySetInnerHTML={{ __html: y.substantif }}></td>
-                                                <td dangerouslySetInnerHTML={{ __html: y.administratif }}></td>
-                                                <td dangerouslySetInnerHTML={{ __html: y.usulanPerubahanBatangTubuh }}></td>
-                                                <td dangerouslySetInnerHTML={{ __html: y.usulanPerubahanPenjelasan }}></td>
-                                            </tr>
-                                        ))
-                                        : null
-                                ))
-                            }
-                        </tbody>
-                    </table>
+                    <div className='table-responsive mt-4'>
+                        <table className="table">
+                            <thead>
+                                <tr className="bg-merah-gelap text-white">
+                                    <td style={{ minWidth: 200 }}>Instansi</td>
+                                    <td style={{ minWidth: 400 }}>Batang Tubuh</td>
+                                    <td style={{ minWidth: 400 }}>Penjelasan</td>
+                                    <td style={{ minWidth: 400 }}>Tanggapan Batang Tubuh Substantif</td>
+                                    <td style={{ minWidth: 400 }}>Tanggapan Batang Tubuh Administratif</td>
+                                    <td style={{ minWidth: 400 }}>Tanggapan Penjelasan Substantif</td>
+                                    <td style={{ minWidth: 400 }}>Tanggapan Penjelasan Administratif</td>
+                                    <td style={{ minWidth: 400 }}>Usulan Perubahan Batang Tubuh</td>
+                                    <td style={{ minWidth: 400 }}>Usulan Perubahan Penjelasan</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    tableData.map((x, index) => (
+                                        index == selectedBaris - 1 || selectedBaris == 0 ?
+                                            x.responseBaris.map((y, indexY) => (
+                                                <tr key={`table-data-${index}-${indexY}`}>
+                                                    <td dangerouslySetInnerHTML={{ __html: y.user.name }}></td>
+                                                    <td dangerouslySetInnerHTML={{ __html: x.tubuh }}></td>
+                                                    <td dangerouslySetInnerHTML={{ __html: x.penjelasan }}></td>
+                                                    <td dangerouslySetInnerHTML={{ __html: y.batangSubstantif }}></td>
+                                                    <td dangerouslySetInnerHTML={{ __html: y.batangAdministratif }}></td>
+                                                    <td dangerouslySetInnerHTML={{ __html: y.penjelasanSubstantif }}></td>
+                                                    <td dangerouslySetInnerHTML={{ __html: y.penjelasanAdministratif }}></td>
+                                                    <td dangerouslySetInnerHTML={{ __html: y.usulanPerubahanBatangTubuh }}></td>
+                                                    <td dangerouslySetInnerHTML={{ __html: y.usulanPerubahanPenjelasan }}></td>
+                                                </tr>
+                                            ))
+                                            : null
+                                    ))
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

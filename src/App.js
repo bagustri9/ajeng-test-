@@ -118,7 +118,7 @@ function App() {
           <div className='my-auto ps-4 d-flex' style={{ borderLeft: '1px solid #9FA3A9', height: 40, fontSize: 20 }}>
             <Dropdown className='d-flex'>
               <Dropdown.Toggle as={CustomToggle} id="dropdown-basic">
-                <span className=''><b>Hallo</b>, Ajeng</span>
+                <span className=''><b>Hallo</b>, {users.find(x => x.id == loginId)?.name ?? ""}</span>
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <Dropdown.Item onClick={() => {

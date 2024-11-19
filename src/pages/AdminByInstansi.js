@@ -54,7 +54,7 @@ function Dashboard() {
             </div>
             <div className="card col-8 offset-2">
                 <div className="card-body shadow-sm p-4" style={{ minHeight: 550 }}>
-                    {selectedInstansi != 0 ?
+                    {/* {selectedInstansi != 0 ?
                         data.responseRpojk.find(x => x.user.id == selectedInstansi).status == "submitted" ?
                             <div className='d-flex justify-content-end mb-3'>
                                 <div className='d-flex'>
@@ -138,40 +138,46 @@ function Dashboard() {
                                     <div className="alert alert-success" role="alert">
                                         Tanggapan telah diterima !
                                     </div> : null
-                        : null}
-                    <table className="table">
-                        <thead>
-                            <tr className="bg-merah-gelap text-white">
-                                <th>Baris</th>
-                                <th>Batang Tubuh</th>
-                                <th>Penjelasan</th>
-                                <th>Substantif</th>
-                                <th>Administratif</th>
-                                <th>Usulan Perubahan Batang Tubuh</th>
-                                <th>Usulan Perubahan Penjelasan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {selectedInstansi != 0 ?
-                                tableData.map((x, index) => (
-                                    <tr key={`table-data-${index}`}>
-                                        <td>{index + 1}</td>
-                                        <td dangerouslySetInnerHTML={{ __html: x.tubuh }}></td>
-                                        <td dangerouslySetInnerHTML={{ __html: x.penjelasan }}></td>
-                                        <td dangerouslySetInnerHTML={{ __html: x.response?.substantif ?? "-" }}></td>
-                                        <td dangerouslySetInnerHTML={{ __html: x.response?.administratif ?? "-" }}></td>
-                                        <td dangerouslySetInnerHTML={{ __html: x.response?.usulanPerubahanBatangTubuh ?? "-" }}></td>
-                                        <td dangerouslySetInnerHTML={{ __html: x.response?.usulanPerubahanPenjelasan ?? "-" }}></td>
-                                    </tr>
-                                )) :
-                                <tr>
-                                    <td colSpan={7} className='text-center'>
-                                        Pilih instansi terlebih dahulu !
-                                    </td>
+                        : null} */}
+                    <div className='table-responsive mt-4'>
+                        <table className="table">
+                            <thead>
+                                <tr className="bg-merah-gelap text-white">
+                                    <td style={{ minWidth: 100 }}>Baris ke-</td>
+                                    <td style={{ minWidth: 400 }}>Batang Tubuh</td>
+                                    <td style={{ minWidth: 400 }}>Penjelasan</td>
+                                    <td style={{ minWidth: 400 }}>Tanggapan Batang Tubuh Substantif</td>
+                                    <td style={{ minWidth: 400 }}>Tanggapan Batang Tubuh Administratif</td>
+                                    <td style={{ minWidth: 400 }}>Tanggapan Penjelasan Substantif</td>
+                                    <td style={{ minWidth: 400 }}>Tanggapan Penjelasan Administratif</td>
+                                    <td style={{ minWidth: 400 }}>Usulan Perubahan Batang Tubuh</td>
+                                    <td style={{ minWidth: 400 }}>Usulan Perubahan Penjelasan</td>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {selectedInstansi != 0 ?
+                                    tableData.map((x, index) => (
+                                        <tr key={`table-data-${index}`}>
+                                            <td>{index + 1}</td>
+                                            <td dangerouslySetInnerHTML={{ __html: x.tubuh }}></td>
+                                            <td dangerouslySetInnerHTML={{ __html: x.penjelasan }}></td>
+                                            <td dangerouslySetInnerHTML={{ __html: x.response?.batangSubstantif ?? "-" }}></td>
+                                            <td dangerouslySetInnerHTML={{ __html: x.response?.batangAdministratif ?? "-" }}></td>
+                                            <td dangerouslySetInnerHTML={{ __html: x.response?.penjelasanSubstantif ?? "-" }}></td>
+                                            <td dangerouslySetInnerHTML={{ __html: x.response?.penjelasanAdministratif ?? "-" }}></td>
+                                            <td dangerouslySetInnerHTML={{ __html: x.response?.usulanPerubahanBatangTubuh ?? "-" }}></td>
+                                            <td dangerouslySetInnerHTML={{ __html: x.response?.usulanPerubahanPenjelasan ?? "-" }}></td>
+                                        </tr>
+                                    )) :
+                                    <tr>
+                                        <td colSpan={7} className='text-center'>
+                                            Pilih instansi terlebih dahulu !
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
