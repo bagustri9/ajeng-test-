@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import { useOutletContext, useParams } from 'react-router-dom';
+import * as XLSX from 'xlsx';
 
 function Dashboard() {
     const { Swal, navigate, db } = useOutletContext();
@@ -34,6 +35,33 @@ function Dashboard() {
         setTabelData(newData)
     }, [selectedBaris, data])
 
+    const handleExport = () => {
+        // Create a worksheet from the data
+        var dataExport = [];
+        tableData.map((x, index) => {
+            if (index == selectedBaris - 1 || selectedBaris == 0) {
+                x.responseBaris.map((y, indexY) => {
+                    dataExport.push({
+                        "Baris Ke": index + 1,
+                        "Instansi": y.user.name,
+                        "Batang Tubuh": x.tubuhPlain,
+                        "Penjelasan": x.penjelasanPlain,
+                        "Tanggapan Batang Tubuh Substantif": y.batangSubstantifPlain ?? "-",
+                        "Tanggapan Batang Tubuh Administratif": y.batangAdministratifPlain ?? "-",
+                        "Tanggapan Penjelasan Substantif": y.penjelasanSubstantifPlain ?? "-",
+                        "Tanggapan Penjelasan Administratif": y.penjelasanAdministratifPlain ?? "-",
+                        "Usulan Perubahan Batang Tubuh": y.usulanPerubahanBatangTubuhPlain ?? "-",
+                        "Usulan Perubahan Penjelasan": y.usulanPerubahanPenjelasanPlain ?? "-"
+                    })
+                })
+            }
+        })
+        const ws = XLSX.utils.json_to_sheet(dataExport);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        XLSX.writeFile(wb, `Ekspor_Tanggapan_${`${new Date().getDate()}-${new Date().getMonth() + 1}-${new Date().getFullYear()}`}.xlsx`);
+    };
+
     return (
         <div className=' col-12' style={{ paddingTop: 40, fontWeight: 600 }}>
             <div className='col-8 offset-2 mb-4'>
@@ -46,6 +74,9 @@ function Dashboard() {
             </div>
             <div className="card col-8 offset-2">
                 <div className="card-body shadow-sm p-4" style={{ minHeight: 550 }}>
+                    <div className='d-flex justify-content-end'>
+                        <button className='btn btn-success' onClick={handleExport}>Ekspor Data</button>
+                    </div>
                     <div className='table-responsive mt-4'>
                         <table className="table">
                             <thead>

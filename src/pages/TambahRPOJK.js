@@ -45,8 +45,21 @@ function Dashboard() {
             } else {
                 return;
             }
+            const createdDate = new Date();
+            const addDaysStr = e.target[2].value;
+            const addDays = parseInt(addDaysStr, 10);
+            const givenDate = new Date(createdDate);
+            givenDate.setDate(givenDate.getDate() + addDays);
+            const deadline = givenDate.toISOString();
+            console.log(deadline);
             if (params.id == undefined) {
-                var rpojkDataBaru = db.create("rpojk", { judul: e.target[1].value, isPublished: isPublished, createdDate: new Date() });
+                var rpojkDataBaru = db.create("rpojk",
+                    {
+                        judul: e.target[1].value,
+                        isPublished: isPublished,
+                        createdDate: createdDate,
+                        deadline: deadline
+                    });
                 baris.map((data) => {
                     db.create("baris", { ...data, rpojkid: rpojkDataBaru.id });
                 });
@@ -58,7 +71,12 @@ function Dashboard() {
                     navigate("/")
                 });
             } else {
-                db.update("rpojk", params.id, { judul: e.target[1].value, isPublished: isPublished });
+                db.update("rpojk", params.id,
+                    {
+                        judul: e.target[1].value,
+                        isPublished: isPublished,
+                        deadlineDate: deadline
+                    });
                 var oldBaris = db.readAll("baris").filter(x => x.rpojkid == params.id);
                 console.log(oldBaris)
                 oldBaris.map((old) => {
@@ -103,8 +121,10 @@ function Dashboard() {
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
+                                    const plainText = editor.getContent({ format: 'text' });
                                     setEditData(old => {
                                         old.tubuh = content
+                                        old.tubuhPlain = plainText
                                         return old;
                                     })
                                 }
@@ -129,8 +149,10 @@ function Dashboard() {
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
+                                    const plainText = editor.getContent({ format: 'text' });
                                     setEditData(old => {
                                         old.penjelasan = content
+                                        old.penjelasanPlain = plainText
                                         return old;
                                     })
                                 }
@@ -179,9 +201,15 @@ function Dashboard() {
                             <div className='d-flex mb-3 justify-content-end'>
                                 <button className='btn btn-primary'>Simpan Data</button>
                             </div>
-                            <div className='d-flex'>
-                                <label className='my-auto me-2'>Judul</label>
-                                <input className="my-auto flex-grow-1" defaultValue={rpojk.judul} name="judul" required={true} />
+                            <div className='d-flex justify-content-between'>
+                                <div style={{ width: '48%' }} className='d-flex flex-column'>
+                                    <label class="form-label">Judul:</label>
+                                    <input className="my-auto flex-grow-1 form-control" defaultValue={rpojk.judul} name="judul" required={true} />
+                                </div>
+                                <div style={{ width: '48%' }} className='d-flex flex-column'>
+                                    <label class="form-label">Berlaku Selama:</label>
+                                    <input min={0} className="my-auto flex-grow-1 form-control" placeholder='Dalam Hari (Contoh: 30 untuk 1 bulan)' type='number' defaultValue={rpojk.deadline} name="deadline" required={true} />
+                                </div>
                             </div>
                         </form>
                         <div className='table-responsive mt-4'>

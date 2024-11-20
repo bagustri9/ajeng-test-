@@ -121,8 +121,10 @@ function TambahResponse() {
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
+                                    const plainText = editor.getContent({ format: 'text' });
                                     setEditData(old => {
                                         old.batangSubstantif = content
+                                        old.batangSubstantifPlain = plainText
                                         return old;
                                     })
                                 }
@@ -150,8 +152,10 @@ function TambahResponse() {
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
+                                    const plainText = editor.getContent({ format: 'text' });
                                     setEditData(old => {
                                         old.batangAdministratif = content
+                                        old.batangAdministratifPlain = plainText
                                         return old;
                                     })
                                 }
@@ -177,8 +181,10 @@ function TambahResponse() {
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
+                                    const plainText = editor.getContent({ format: 'text' });
                                     setEditData(old => {
                                         old.penjelasanSubstantif = content
+                                        old.penjelasanSubstantifPlain = plainText
                                         return old;
                                     })
                                 }
@@ -206,8 +212,10 @@ function TambahResponse() {
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
+                                    const plainText = editor.getContent({ format: 'text' });
                                     setEditData(old => {
                                         old.penjelasanAdministratif = content
+                                        old.penjelasanAdministratifPlain = plainText
                                         return old;
                                     })
                                 }
@@ -232,8 +240,10 @@ function TambahResponse() {
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
+                                    const plainText = editor.getContent({ format: 'text' });
                                     setEditData(old => {
                                         old.usulanPerubahanBatangTubuh = content
+                                        old.usulanPerubahanBatangTubuhPlain = plainText
                                         return old;
                                     })
                                 }
@@ -258,8 +268,10 @@ function TambahResponse() {
                             }}
                             onEditorChange={(content, editor) => {
                                 if (editData != null) {
+                                    const plainText = editor.getContent({ format: 'text' });
                                     setEditData(old => {
                                         old.usulanPerubahanPenjelasan = content
+                                        old.usulanPerubahanPenjelasanPlain = plainText
                                         return old;
                                     })
                                 }

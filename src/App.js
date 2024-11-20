@@ -109,7 +109,7 @@ function App() {
               <Dropdown.Menu>
                 {notification.map((x, index) => (
                   loginId == 0 ?
-                    <Dropdown.Item key={"notification-" + index} eventKey="1">Instansi <b>{(users.find(y => y.id == x.instansi)?.name ?? "")}</b> memberikan tanggapan ke <b>{response.find(y => y.id == x.responseRpojkId)?.rpojk.judul}</b></Dropdown.Item>
+                    <Dropdown.Item key={"notification-" + index} eventKey="1">Instansi <b>{(users.find(y => y.id == x.instansi)?.name ?? "")}</b> memberikan tanggapan ke <b>{rpojk.find(y => y.id == x.rpojkId)?.judul ?? ""}</b></Dropdown.Item>
                     : <Dropdown.Item key={"notification-" + index} eventKey="1">Status tanggapan <b>{rpojk.find(y => y.id == x.rpojkId)?.judul ?? ""}</b> telah diubah oleh Admin</Dropdown.Item>
                 ))}
               </Dropdown.Menu>

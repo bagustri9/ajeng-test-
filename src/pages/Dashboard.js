@@ -20,7 +20,6 @@ function Dashboard() {
         setRpojk(rpojkData);
         var responseData = db.readAll("responseRpojk").filter(x => x.instansi == localStorage.getItem("loginId"));
         setResponses(responseData);
-        console.log(responseData)
     }, [refresh])
 
     return (
@@ -111,7 +110,7 @@ function Dashboard() {
                                                                     article
                                                                 </span>&nbsp;
                                                                 <span className='my-auto'>
-                                                                    Pasal
+                                                                    Baris
                                                                 </span>
                                                             </Link>
                                                         </>}
@@ -138,10 +137,15 @@ function Dashboard() {
                             </thead>
                             <tbody>
                                 {rpojk.filter(x => x.isPublished).map((x, index) => (
-                                    <tr key={`baris-${index}`} style={{ cursor: responses.find(y => y.rpojkId == x.id) == undefined || responses.find(y => y.rpojkId == x.id).status == "draft" || responses.find(y => y.rpojkId == x.id).status == "declined" ? "pointer" : "text" }}
+                                    <tr key={`baris-${index}`} style={{
+                                        cursor:
+                                            (responses.find(y => y.rpojkId == x.id) == undefined ||
+                                                responses.find(y => y.rpojkId == x.id).status == "draft" ||
+                                                responses.find(y => y.rpojkId == x.id).status == "declined") && !(new Date(x.deadline) < new Date()) ? "pointer" : "text"
+                                    }}
                                         onClick={() => {
                                             var respon = responses.find(y => y.rpojkId == x.id);
-                                            if (respon == undefined || respon.status == "draft" || respon.status == "declined") {
+                                            if ((respon == undefined || respon.status == "draft" || respon.status == "declined") && !(new Date(x.deadline) < new Date())) {
                                                 navigate("/response/" + x.id)
                                             }
                                         }}
@@ -151,7 +155,9 @@ function Dashboard() {
                                         <td>
                                             {
                                                 responses.find(y => y.rpojkId == x.id) == undefined ?
-                                                    <span className="badge rounded-pill bg-secondary">Belum Diisi</span>
+                                                    new Date(x.deadline) < new Date() ?
+                                                        <span className="badge rounded-pill bg-danger">Terlewat</span> :
+                                                        <span className="badge rounded-pill bg-secondary">Belum Diisi</span>
                                                     : responses.find(y => y.rpojkId == x.id).status == "draft" ?
                                                         <span className="badge rounded-pill bg-warning text-light">Draft</span>
                                                         : responses.find(y => y.rpojkId == x.id).status == "submitted" ?
@@ -162,9 +168,9 @@ function Dashboard() {
                                                                     delay={{ show: 250, hide: 400 }}
                                                                     overlay={(props) => (
                                                                         <Tooltip id="button-tooltip" {...props}>
-                                                                          Alasan Ditolak : {responses.find(y => y.rpojkId == x.id).declinedReason}
+                                                                            Alasan Ditolak : {responses.find(y => y.rpojkId == x.id).declinedReason}
                                                                         </Tooltip>
-                                                                      )}
+                                                                    )}
                                                                 >
                                                                     <span className="badge rounded-pill bg-danger text-light">Ditolak</span>
                                                                 </OverlayTrigger>
@@ -174,18 +180,18 @@ function Dashboard() {
 
                                             }
                                         </td>
-                                        <td>{`${new Date(x.createdDate).getHours()}:${new Date(x.createdDate).getMinutes()} ${new Date(x.createdDate).getDate()}/${new Date(x.createdDate).getMonth()}/${new Date(x.createdDate).getFullYear()}`}</td>
+                                        <td>{`${new Date(x.deadline).getHours()}:${new Date(x.deadline).getMinutes()} ${new Date(x.deadline).getDate()}/${new Date(x.deadline).getMonth() + 1}/${new Date(x.deadline).getFullYear()}`}</td>
                                     </tr>
                                 ))}
-                            {rpojk.filter(x => x.isPublished).length == 0 ?
-                                <tr>
-                                    <td colSpan={6} className='text-center'>Belum ada RPOJK yang dirilis!</td>
-                                </tr> : null}
-                        </tbody>
+                                {rpojk.filter(x => x.isPublished).length == 0 ?
+                                    <tr>
+                                        <td colSpan={6} className='text-center'>Belum ada RPOJK yang dirilis!</td>
+                                    </tr> : null}
+                            </tbody>
                         </table>
                     }
+                </div>
             </div>
-        </div>
         </div >
     );
 }
