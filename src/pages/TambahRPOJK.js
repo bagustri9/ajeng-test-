@@ -207,7 +207,7 @@ function Dashboard() {
                                     <input className="my-auto flex-grow-1 form-control" defaultValue={rpojk.judul} name="judul" required={true} />
                                 </div>
                                 <div style={{ width: '48%' }} className='d-flex flex-column'>
-                                    <label class="form-label">Berlaku Selama:</label>
+                                    <label class="form-label">Tenggat Waktu Pengisian:</label>
                                     <input min={0} className="my-auto flex-grow-1 form-control" placeholder='Dalam Hari (Contoh: 30 untuk 1 bulan)' type='number' defaultValue={rpojk.deadline} name="deadline" required={true} />
                                 </div>
                             </div>
