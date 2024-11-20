@@ -56,6 +56,24 @@ function Dashboard() {
                                                     {!x.isPublished ?
                                                         <>
                                                             <button onClick={() => {
+                                                                Swal.fire({
+                                                                    title: "Rilis RPOJK ?",
+                                                                    text: "Apakah anda yakin ? Data tidak dapat diubah setelah dirilis",
+                                                                    icon: "info",
+                                                                    showCancelButton: true,
+                                                                    confirmButtonText: "Rilis",
+                                                                    cancelButtonText: "Kembali",
+                                                                }).then((result) => {
+                                                                    if (result.isConfirmed) {
+                                                                        x.isPublished = true;
+                                                                        db.update("rpojk", x.id, x)
+                                                                        Swal.fire({
+                                                                            title: "Sukses!",
+                                                                            text: "Data berhasil dirilis!",
+                                                                            icon: "success"
+                                                                        })
+                                                                    }
+                                                                })
                                                             }} className='btn btn-success text-white d-flex me-2'>
                                                                 <span className="material-symbols-outlined my-auto">
                                                                     publish

@@ -30,7 +30,7 @@ function Dashboard() {
         var isPublished = false;
         Swal.fire({
             title: "Rilis RPOJK ?",
-            text: "Data akan disimpan. Apakah anda juga ingin menerbitkan RPOJK ?",
+            text: "Data akan disimpan. Apakah anda juga ingin merilis RPOJK ?",
             icon: "info",
             showCancelButton: true,
             showDenyButton: true,

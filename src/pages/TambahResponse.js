@@ -192,7 +192,7 @@ function TambahResponse() {
                         />
                     </div>
                     <div className='mb-4'>
-                        <label className='ms-2'><b>2. Tanggapan Penjelasan Administratif</b></label>
+                        <label className='ms-2'><b>4. Tanggapan Penjelasan Administratif</b></label>
                         <Editor
                             initialValue={editData?.penjelasanAdministratif ?? ""}
                             apiKey={TINYMCE_API_KEY}
